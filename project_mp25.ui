@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>471</height>
+    <width>865</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="7,40">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -31,6 +31,114 @@
      <number>0</number>
     </property>
     <item>
+     <widget class="QFrame" name="frame_2">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(170, 170, 255);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>7</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="btnAbrirFile">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(170, 85, 255);</string>
+         </property>
+         <property name="text">
+          <string>Abrir Archivo</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txtArchivo">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnEliminarDatos">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 85, 255);</string>
+         </property>
+         <property name="text">
+          <string>Eliminar Datos</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Intervalo de Tiempo</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txtTimeInterval">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>seconds [1S], minute [1T], hour [1H], day [1D], week [1W]</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnPromedio">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 255, 127);</string>
+         </property>
+         <property name="text">
+          <string>Promedio</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSalir">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 170, 0);</string>
+         </property>
+         <property name="text">
+          <string>Salir</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QFrame" name="frame">
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -41,108 +149,20 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QFrame" name="frame_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>572</width>
-         <height>43</height>
-        </rect>
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="8,20">
+       <property name="spacing">
+        <number>9</number>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(170, 170, 255);</string>
+       <property name="leftMargin">
+        <number>9</number>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
+       <property name="bottomMargin">
+        <number>9</number>
        </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="btnAbrirFile">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(170, 85, 255);</string>
-          </property>
-          <property name="text">
-           <string>Abrir Archivo</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="txtArchivo">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnMostrarFile">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 255, 127);</string>
-          </property>
-          <property name="text">
-           <string>Mostrar Datos</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>PROJECT PM 25</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnSalir">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 170, 0);</string>
-          </property>
-          <property name="text">
-           <string>Salir</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QTableWidget" name="tblDatos">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>70</y>
-         <width>301</width>
-         <height>381</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QWidget {
+       <item>
+        <widget class="QTableWidget" name="tblDatos">
+         <property name="styleSheet">
+          <string notr="true">QWidget {
 	background-color: #ffffff;
 	color: #000000;
 
@@ -165,18 +185,120 @@ QTableWidget QTableCornerButton::section {
 	background-color: #646464;
 	border: 1px solid #ff0000;
 }</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="frameGrafico" native="true">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>150</y>
-         <width>231</width>
-         <height>181</height>
-        </rect>
-       </property>
-      </widget>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 0, 0);</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="15,0,30">
+          <property name="spacing">
+           <number>9</number>
+          </property>
+          <property name="leftMargin">
+           <number>9</number>
+          </property>
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <property name="rightMargin">
+           <number>9</number>
+          </property>
+          <property name="bottomMargin">
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frame_6">
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(170, 170, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QTableWidget" name="tableCentralTendencyMeasures">
+               <property name="styleSheet">
+                <string notr="true">QWidget {
+	background-color: #ffffff;
+	color: #000000;
+
+}
+
+QHeaderView::section {
+	background-color: #aaaaff;
+	padding: 2px;
+
+	border: 1px solid #fffff8;
+	font-size: 10pt;
+}
+
+QTableWidget {
+	gridline-color: #aaaaff;
+	font-size: 10pt;
+}
+
+QTableWidget QTableCornerButton::section {
+	background-color: #646464;
+	border: 1px solid #ff0000;
+}</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="tableMeanTimeInterval">
+               <property name="styleSheet">
+                <string notr="true">QWidget {
+	background-color: #ffffff;
+	color: #000000;
+
+}
+
+QHeaderView::section {
+	background-color: #aaaaff;
+	padding: 2px;
+
+	border: 1px solid #fffff8;
+	font-size: 10pt;
+}
+
+QTableWidget {
+	gridline-color: #aaaaff;
+	font-size: 10pt;
+}
+
+QTableWidget QTableCornerButton::section {
+	background-color: #646464;
+	border: 1px solid #ff0000;
+}</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_3">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="frameGrafico" stretch=""/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
