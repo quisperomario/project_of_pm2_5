@@ -33,7 +33,7 @@
     <item>
      <widget class="QFrame" name="frame_2">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(170, 170, 255);</string>
+       <string notr="true">background-color: rgb(0, 0, 0);</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -80,6 +80,9 @@
        </item>
        <item>
         <widget class="QLabel" name="label">
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>Intervalo de Tiempo</string>
          </property>
@@ -97,6 +100,9 @@
        </item>
        <item>
         <widget class="QLabel" name="label_2">
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>seconds [1S], minute [1T], hour [1H], day [1D], week [1W]</string>
          </property>
@@ -111,6 +117,29 @@
           <string>Promedio</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDescargarFileExcel">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string>Descargar File</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <spacer name="horizontalSpacer">
@@ -149,7 +178,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="8,20">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,20">
        <property name="spacing">
         <number>9</number>
        </property>
@@ -169,7 +198,7 @@
 }
 
 QHeaderView::section {
-	background-color: #aaaaff;
+	background-color: #aa00ff;
 	padding: 2px;
 
 	border: 1px solid #fffff8;
@@ -177,7 +206,7 @@ QHeaderView::section {
 }
 
 QTableWidget {
-	gridline-color: #aaaaff;
+	gridline-color: #aa00ff;
 	font-size: 10pt;
 }
 
@@ -220,9 +249,9 @@ QTableWidget QTableCornerButton::section {
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,10">
              <item>
-              <widget class="QTableWidget" name="tableCentralTendencyMeasures">
+              <widget class="QTableWidget" name="tableMeanTimeInterval">
                <property name="styleSheet">
                 <string notr="true">QWidget {
 	background-color: #ffffff;
@@ -231,7 +260,7 @@ QTableWidget QTableCornerButton::section {
 }
 
 QHeaderView::section {
-	background-color: #aaaaff;
+	background-color: #aa00ff;
 	padding: 2px;
 
 	border: 1px solid #fffff8;
@@ -239,7 +268,7 @@ QHeaderView::section {
 }
 
 QTableWidget {
-	gridline-color: #aaaaff;
+	gridline-color: #aa00ff;
 	font-size: 10pt;
 }
 
@@ -251,7 +280,7 @@ QTableWidget QTableCornerButton::section {
               </widget>
              </item>
              <item>
-              <widget class="QTableWidget" name="tableMeanTimeInterval">
+              <widget class="QTableWidget" name="tableCentralTendencyMeasures">
                <property name="styleSheet">
                 <string notr="true">QWidget {
 	background-color: #ffffff;
@@ -260,7 +289,7 @@ QTableWidget QTableCornerButton::section {
 }
 
 QHeaderView::section {
-	background-color: #aaaaff;
+	background-color: #00ff7f;
 	padding: 2px;
 
 	border: 1px solid #fffff8;
@@ -268,7 +297,7 @@ QHeaderView::section {
 }
 
 QTableWidget {
-	gridline-color: #aaaaff;
+	gridline-color: #00ff7f;
 	font-size: 10pt;
 }
 
@@ -293,7 +322,7 @@ QTableWidget QTableCornerButton::section {
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="frameGrafico" stretch=""/>
+           <layout class="QVBoxLayout" name="frameGrafico"/>
           </item>
          </layout>
         </widget>
