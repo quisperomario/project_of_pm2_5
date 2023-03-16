@@ -14,7 +14,7 @@
    <string>RqMe@n</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="5,40">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="4,40">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -32,6 +32,11 @@
     </property>
     <item>
      <widget class="QFrame" name="frame_2">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(0, 0, 0);</string>
       </property>
@@ -53,16 +58,28 @@
          <property name="enabled">
           <bool>true</bool>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(170, 85, 255);</string>
          </property>
          <property name="text">
-          <string>Abrir Archivo</string>
+          <string>Open File</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="txtArchivo">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
@@ -70,11 +87,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnEliminarDatos">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 85, 255);</string>
          </property>
          <property name="text">
-          <string>Eliminar Datos</string>
+          <string>Clear Data</string>
          </property>
         </widget>
        </item>
@@ -84,12 +106,17 @@
           <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>Intervalo de Tiempo</string>
+          <string>Tiime Interval</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="txtTimeInterval">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
@@ -104,27 +131,37 @@
           <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>seconds [1S], minute [1T], hour [1H], day [1D], week [1W]</string>
+          <string>seconds[S]-minute[T]-hour[H]-day[D]-week[W]-months[M]</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnPromedio">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 255, 127);</string>
          </property>
          <property name="text">
-          <string>Promedio</string>
+          <string>Mean</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnDescargarFileExcel">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 255, 255);</string>
          </property>
          <property name="text">
-          <string>Descargar File</string>
+          <string>Download File</string>
          </property>
         </widget>
        </item>
@@ -156,11 +193,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnSalir">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 170, 0);</string>
          </property>
          <property name="text">
-          <string>Salir</string>
+          <string>Exit</string>
          </property>
         </widget>
        </item>
@@ -190,6 +232,11 @@
        </property>
        <item>
         <widget class="QTableWidget" name="tblDatos">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">QWidget {
 	background-color: #ffffff;
@@ -202,12 +249,12 @@ QHeaderView::section {
 	padding: 2px;
 
 	border: 1px solid #fffff8;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget {
 	gridline-color: #aa00ff;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget QTableCornerButton::section {
@@ -222,7 +269,7 @@ QTableWidget QTableCornerButton::section {
          <property name="styleSheet">
           <string notr="true">background-color: rgb(0, 0, 0);</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="15,0,30">
+         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="10,0,35">
           <property name="spacing">
            <number>9</number>
           </property>
@@ -252,6 +299,11 @@ QTableWidget QTableCornerButton::section {
             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="5,10">
              <item>
               <widget class="QTableWidget" name="tableMeanTimeInterval">
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QWidget {
 	background-color: #ffffff;
@@ -264,12 +316,12 @@ QHeaderView::section {
 	padding: 2px;
 
 	border: 1px solid #fffff8;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget {
 	gridline-color: #c4c701;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget QTableCornerButton::section {
@@ -281,6 +333,11 @@ QTableWidget QTableCornerButton::section {
              </item>
              <item>
               <widget class="QTableWidget" name="tableCentralTendencyMeasures">
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QWidget {
 	background-color: #ffffff;
@@ -293,12 +350,12 @@ QHeaderView::section {
 	padding: 2px;
 
 	border: 1px solid #fffff8;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget {
 	gridline-color: #00ff7f;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 
 QTableWidget QTableCornerButton::section {
