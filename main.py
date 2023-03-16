@@ -169,14 +169,12 @@ class MiVentana(QMainWindow, Ui_Form):
         # Llamamos a la funcion para mostrar las medidas de tendencia central en la tabla
         self.mostrarDatoMedidasTendenciaCentral()
 
-        '''
-
         # Crear el gráfico utilizando Matplotlib
         self.figura = Figure()
         self.grafico = self.figura.add_subplot(111)
 
-        self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'])
-        self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'])
+        self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'], color='red')
+        self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'], color='blue')
         
         # Asignar etiquetas al eje x
         self.grafico.set_xticks(self.mean_time_interval.index)
@@ -188,13 +186,23 @@ class MiVentana(QMainWindow, Ui_Form):
         self.figura.tight_layout()
 
         self.grafico.grid()
+        
+
+        if self.count == 0:
+            # Agregar el gráfico al widget QVBoxLayout
+            self.canvas = FigureCanvasQTAgg(self.figura)
+            self.frameGrafico.addWidget(self.canvas)
+            self.count += 1 
+        else:
+
+            # para eliminar el objeto de gráfico del QVBoxLayout
+            self.frameGrafico.removeWidget(self.canvas)
+            self.canvas.deleteLater()
+
+            self.canvas = FigureCanvasQTAgg(self.figura)
+            self.frameGrafico.addWidget(self.canvas)
 
         '''
-
-        # Agregar el gráfico al widget QVBoxLayout
-        #self.canvas = FigureCanvasQTAgg(self.figura)
-        #self.frameGrafico.addWidget(self.canvas)
-
         if self.count == 0:
             self.grafica = Canvas_grafica(self.mean_time_interval)
             self.frameGrafico.addWidget(self.grafica)
@@ -206,9 +214,9 @@ class MiVentana(QMainWindow, Ui_Form):
             
             self.grafica = Canvas_grafica(self.mean_time_interval)
             self.frameGrafico.addWidget(self.grafica)
-            
-            print("para graficar otra vez")
 
+            print("para graficar otra vez")
+        '''
 
 
         #time.sleep(4)
@@ -346,25 +354,6 @@ class MiVentana(QMainWindow, Ui_Form):
     def mostrarMensaje(self):
         # print(self.df)
         print("Hola, presionaste el button Salir")
-
-
-class Canvas_grafica(FigureCanvasQTAgg):
-    def __init__(self, df= None):
-        self.df = df.reset_index()
-        self.fig, self.ax = plt.subplots(1, dpi=100, figsize=(5,5),sharey=True, facecolor = 'white')
-        super().__init__(self.fig)
-
-        x = self.df['Fecha_Hora']
-        y = self.df['mean']
-
-        self.ax.scatter(x, y, color = 'blue')
-        self.ax.plot(x, y, color='red')
-        self.fig.suptitle('Grafica de la funcion', size=9)
-
-        print(self.df)
-        print("[INFO] Mostrar DF en la clase Canva_grfica")
-
-        
 
 
 if __name__ == "__main__":

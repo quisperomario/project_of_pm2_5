@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
+    <width>953</width>
     <height>486</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="7,40">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="5,40">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -260,7 +260,7 @@ QTableWidget QTableCornerButton::section {
 }
 
 QHeaderView::section {
-	background-color: #aa00ff;
+	background-color: #c4c701;
 	padding: 2px;
 
 	border: 1px solid #fffff8;
@@ -268,7 +268,7 @@ QHeaderView::section {
 }
 
 QTableWidget {
-	gridline-color: #aa00ff;
+	gridline-color: #c4c701;
 	font-size: 10pt;
 }
 
