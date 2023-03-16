@@ -12,6 +12,7 @@ import time
 import numpy as np
 import sys
 import pandas as pd
+from scipy import stats
 import xlsxwriter
 import matplotlib.pyplot as plt
 
@@ -37,6 +38,7 @@ class MiVentana(QMainWindow, Ui_Form):
         self.std_time_interval = None
         self.min_time_interval = None
         self.maximo_time_interval = None
+        self.confidence_interval = None
         self.df_mtc_std_ic = None
         self.count = 0
 
@@ -260,10 +262,14 @@ class MiVentana(QMainWindow, Ui_Form):
 
         self.maximo_time_interval = self.df.resample(self.time_interval).max()
         self.maximo_time_interval = self.maximo_time_interval.rename(columns={'pm25': 'max'})
+        
+        print(self.mean_time_interval)
 
-        # Unir dataframe
+        # LLamamos a la funcion que calcula intervalo de confianza
+        self.calcularIntervaloConfianza()
+
         # Unir dataframe - Concatenar los dataframes
-        self.df_mtc_std_ic = pd.concat([self.mean_time_interval, self.median_time_interval, self.std_time_interval, self.min_time_interval, self.maximo_time_interval], axis=1)
+        self.df_mtc_std_ic = pd.concat([self.mean_time_interval, self.median_time_interval, self.std_time_interval, self.min_time_interval, self.maximo_time_interval, self.confidence_interval], axis=1)
 
         # Resetear el índice a una columna
         self.df = self.df.reset_index()
@@ -277,27 +283,21 @@ class MiVentana(QMainWindow, Ui_Form):
         self.time_interval = self.time_interval.upper()
 
     def calcularIntervaloConfianza(self):
-        # agrupar datos por un intervalo de 1 día y calcular la media y la desviación estándar
-        mean_std = self.df.resample('1D').agg({'valor': ['mean', 'std']})
 
-        # calcular el tamaño de la muestra
-        n = self.df.resample('1D').count()
+        # Resetear el índice a una columna
+        self.df = self.df.reset_index()
 
-        # calcular el nivel de confianza para un nivel de confianza del 95%
-        z_value = 1.96
-        intervalo = z_value * (mean_std['valor']['std'] / np.sqrt(n['valor']))
+        # Agrupar por semana y calcular el intervalo de confianza del 95%
+        self.confidence_interval = self.df.groupby(pd.Grouper(key='Fecha_Hora', freq=self.time_interval)).agg(lambda x: stats.t.interval(0.95, len(x)-1, loc=x.mean(), scale=stats.sem(x)))
+        self.confidence_interval = self.confidence_interval.rename(columns={'pm25': 'confidence_interval 95%'})
 
-        # calcular los límites inferior y superior del intervalo de confianza
-        lower_bound = mean_std['valor']['mean'] - intervalo
-        upper_bound = mean_std['valor']['mean'] + intervalo
+        # Establecer la columna de fechas como índice del dataframe
+        self.df.set_index('Fecha_Hora', inplace = True)
 
     def EliminarDatos(self):
 
         # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
         self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
-
-        # Almacenamos en el dato global 
-        df_global = self.df
 
         # Llamamos a la funcion que muestra mensage de proceso
         self.messageLoad()
@@ -316,7 +316,6 @@ class MiVentana(QMainWindow, Ui_Form):
         options |= QFileDialog.DontUseNativeDialog
         file_name, _ = QFileDialog.getSaveFileName(self, 'Guardar archivo', '', 'Archivo de Excel (*.xlsx)')
         #file_name, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Excel Workbook (*.xlsx)", options=options)
-        print(file_name)
         if file_name:
             writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
             sheet_name_1 = 'mean_pm25_' + self.time_interval
@@ -360,7 +359,7 @@ class MiVentana(QMainWindow, Ui_Form):
         for i in range(101):
             progress.setValue(i)
             QCoreApplication.processEvents()
-            time.sleep(0.005)
+            time.sleep(0.008)
             if progress.wasCanceled():
                 break
 
@@ -368,6 +367,7 @@ class MiVentana(QMainWindow, Ui_Form):
 
     def mostrarMensaje(self):
         # print(self.df)
+        #self.calcularIntervaloConfianza()
         print("Hola, presionaste el button Salir")
 
 
