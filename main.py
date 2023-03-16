@@ -316,6 +316,7 @@ class MiVentana(QMainWindow, Ui_Form):
         options |= QFileDialog.DontUseNativeDialog
         file_name, _ = QFileDialog.getSaveFileName(self, 'Guardar archivo', '', 'Archivo de Excel (*.xlsx)')
         #file_name, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Excel Workbook (*.xlsx)", options=options)
+        print(file_name)
         if file_name:
             writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
             sheet_name_1 = 'mean_pm25_' + self.time_interval
@@ -327,11 +328,25 @@ class MiVentana(QMainWindow, Ui_Form):
             # Cerrar el escritor de Excel
             writer.close()
 
+            # Para descargar la grafica
+            self.descargarGrafica(file_name)
+
         # Establecer la columna de fechas como índice del dataframe
         self.mean_time_interval.set_index('Fecha_Hora', inplace = True)
         self.df_mtc_std_ic.set_index('Fecha_Hora', inplace = True)
 
+    def descargarGrafica(self, file_name):
+        route = self.getRutaImges(file_name)
+        # Guarda la figura en formato .jpg
+        file_image = route+'graph_pm25_'+self.time_interval+'.jpg'
+        self.figura.savefig(file_image)
 
+    def getRutaImges(self, file_name):
+        list_route = file_name.split("/")
+        route = ""
+        for i in range(len(list_route)-1):
+            route = route + list_route[i] + "/"
+        return route
 
     def messageLoad(self):
         
