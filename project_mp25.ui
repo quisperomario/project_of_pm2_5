@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>RqMe@an</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="5,40">
@@ -338,7 +338,7 @@ QTableWidget QTableCornerButton::section {
   <connection>
    <sender>btnSalir</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
