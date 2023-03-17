@@ -16,6 +16,7 @@ from scipy import stats
 import xlsxwriter
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
+from PyQt5.QtWidgets import QMessageBox, QFileDialog
 
 from regression import RegressionData
 
@@ -30,7 +31,7 @@ class MiVentana(QMainWindow, Ui_Form):
 
         # Creacion de un dataframe vacio
         self.df = None
-        self.mean_time_interval = None
+        self.mean_time_interval = pd.DataFrame()
         self.time_interval = None
         self.median_time_interval = None
         self.df_moda = None
@@ -40,7 +41,7 @@ class MiVentana(QMainWindow, Ui_Form):
         self.confidence_interval = None
         self.df_mtc_std_ic = None
         self.count = 0
-
+        self.count_clean_data = 0
 
         # Configurar la interfaz de usuario
         self.setupUi(self)
@@ -72,11 +73,23 @@ class MiVentana(QMainWindow, Ui_Form):
             "Archivos de Excel (*.xlsx *.xls)"
         )
 
-        # Mostrar el nombre del archivo seleccionado en un cuadro de texto
-        self.txtArchivo.setText(archivo)
+        # Verifica si se seleccionó un archivo
+        if archivo:
+            # El archivo fue seleccionado
+            # Aquí puedes hacer lo que necesites con el archivo
+            print(f'Se seleccionó el archivo {archivo}')
 
-        # Conectar la señal clicked del botón btnLeerArchivo a un método
-        self.leerArchivo()
+            # Mostrar el nombre del archivo seleccionado en un cuadro de texto
+            self.txtArchivo.setText(archivo)
+
+            # Conectar la señal clicked del botón btnLeerArchivo a un método
+            self.leerArchivo()
+
+
+        else:
+            # El archivo no fue seleccionado
+            # Mostrar un mensaje al usuario
+            QMessageBox.warning(None, 'Warning', 'You must select a file before continuing.')
         
 
     def leerArchivo(self):
@@ -86,22 +99,22 @@ class MiVentana(QMainWindow, Ui_Form):
         # Leer el archivo en un objeto DataFrame de Pandas
         self.df = pd.read_excel(archivo)
 
-        self.mostrarDatoTabla()
+        self.mostrarDatoTabla(self.df)
 
     
-    def mostrarDatoTabla(self):
+    def mostrarDatoTabla(self, dataFrame):
 
         # Configurar la tabla y agregar datos
-        self.tblDatos.setRowCount(len(self.df.index))
-        self.tblDatos.setColumnCount(len(self.df.columns))
+        self.tblDatos.setRowCount(len(dataFrame.index))
+        self.tblDatos.setColumnCount(len(dataFrame.columns))
 
-        for i in range(len(self.df.index)):
-            for j in range(len(self.df.columns)):
-                item = QTableWidgetItem(str(self.df.iloc[i, j]))
+        for i in range(len(dataFrame.index)):
+            for j in range(len(dataFrame.columns)):
+                item = QTableWidgetItem(str(dataFrame.iloc[i, j]))
                 self.tblDatos.setItem(i, j, item)
 
         # Personalizar los encabezados de la tabla
-        encabezados = list(self.df.columns)
+        encabezados = list(dataFrame.columns)
         self.tblDatos.setHorizontalHeaderLabels(encabezados)
 
         # Ajustar el tamaño de las columnas para que se ajusten a los datos
@@ -161,108 +174,122 @@ class MiVentana(QMainWindow, Ui_Form):
 
     def calcularPromedio(self):
 
-        # Llamamos a la funcion donde calcula el promedio
-        self.promedioIntervaloFechas()
-
-        # Llamamos a la funcion para mostrar datos en la tabla tableCentralTendencyMeasures
-        self.mostrarDatoTablaMean()
-
-        # Llamamos a la funcion para mostrar las medidas de tendencia central en la tabla
-        self.mostrarDatoMedidasTendenciaCentral()
-
-        # Crear el gráfico utilizando Matplotlib
-        self.figura = Figure()
-        self.grafico = self.figura.add_subplot(111)
-
-        self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'], color='red')
-        self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'], color='blue')
-        
-        # Asignar etiquetas al eje x
-        self.grafico.set_xticks(self.mean_time_interval.index)
-        self.grafico.set_xticklabels(self.mean_time_interval.index, rotation=90)
-        self.grafico.set_xlabel("Date and Hour")
-        self.grafico.set_ylabel("PM2.5")
-        self.grafico.set_title("Mean for "+ self.time_interval + " of PM2.5")
-        # Ajustar posición de subplots para mostrar todas las etiquetas
-        self.figura.tight_layout()
-
-        self.grafico.grid()
-        
-
-        if self.count == 0:
-            # Agregar el gráfico al widget QVBoxLayout
-            self.canvas = FigureCanvasQTAgg(self.figura)
-            self.frameGrafico.addWidget(self.canvas)
-            self.count += 1 
+        if not self.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
+            self.mostrarMensajeIngresarValor()
         else:
 
-            # para eliminar el objeto de gráfico del QVBoxLayout
-            self.frameGrafico.removeWidget(self.canvas)
-            self.canvas.deleteLater()
+            # Llamamos a la funcion donde calcula el promedio
+            self.promedioIntervaloFechas()
 
-            self.canvas = FigureCanvasQTAgg(self.figura)
-            self.frameGrafico.addWidget(self.canvas)
+            # Llamamos a la funcion para mostrar datos en la tabla tableCentralTendencyMeasures
+            self.mostrarDatoTablaMean()
 
-        '''
-        if self.count == 0:
-            self.grafica = Canvas_grafica(self.mean_time_interval)
-            self.frameGrafico.addWidget(self.grafica)
-            self.count += 1 
-        else:
-            # para eliminar el objeto de gráfico del QVBoxLayout
-            self.frameGrafico.removeWidget(self.grafica)
-            self.grafica.deleteLater()
+            # Llamamos a la funcion para mostrar las medidas de tendencia central en la tabla
+            self.mostrarDatoMedidasTendenciaCentral()
+
+            # Crear el gráfico utilizando Matplotlib
+            self.figura = Figure()
+            self.grafico = self.figura.add_subplot(111)
+
+            self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'], color='red')
+            self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'], color='blue')
             
-            self.grafica = Canvas_grafica(self.mean_time_interval)
-            self.frameGrafico.addWidget(self.grafica)
+            # Asignar etiquetas al eje x
+            self.grafico.set_xticks(self.mean_time_interval.index)
+            self.grafico.set_xticklabels(self.mean_time_interval.index, rotation=90)
+            self.grafico.set_xlabel("Date and Hour")
+            self.grafico.set_ylabel("PM2.5")
+            self.grafico.set_title("Mean for "+ self.time_interval + " of PM2.5")
+            # Ajustar posición de subplots para mostrar todas las etiquetas
+            self.figura.tight_layout()
 
-            print("para graficar otra vez")
-        '''
+            self.grafico.grid()
+            
+
+            if self.count == 0:
+                # Agregar el gráfico al widget QVBoxLayout
+                self.canvas = FigureCanvasQTAgg(self.figura)
+                self.frameGrafico.addWidget(self.canvas)
+                self.count += 1 
+            else:
+
+                # para eliminar el objeto de gráfico del QVBoxLayout
+                self.frameGrafico.removeWidget(self.canvas)
+                self.canvas.deleteLater()
+
+                self.canvas = FigureCanvasQTAgg(self.figura)
+                self.frameGrafico.addWidget(self.canvas)
+
+            '''
+            if self.count == 0:
+                self.grafica = Canvas_grafica(self.mean_time_interval)
+                self.frameGrafico.addWidget(self.grafica)
+                self.count += 1 
+            else:
+                # para eliminar el objeto de gráfico del QVBoxLayout
+                self.frameGrafico.removeWidget(self.grafica)
+                self.grafica.deleteLater()
+                
+                self.grafica = Canvas_grafica(self.mean_time_interval)
+                self.frameGrafico.addWidget(self.grafica)
+
+                print("para graficar otra vez")
+            '''
 
 
-        #time.sleep(4)
+            #time.sleep(4)
 
-        # para eliminar el objeto de gráfico del QVBoxLayout
-        #self.frameGrafico.removeWidget(self.grafica)
-        #self.grafica.deleteLater()  # opcional: elimina el objeto de gráfico por completo
+            # para eliminar el objeto de gráfico del QVBoxLayout
+            #self.frameGrafico.removeWidget(self.grafica)
+            #self.grafica.deleteLater()  # opcional: elimina el objeto de gráfico por completo
 
-        print("[INFO] Llegue a este punto de graficas....")
+            print("[INFO] Llegue a este punto de graficas....")
 
 
     def promedioIntervaloFechas(self):
 
         self.traerIntervaloTiempo()
+
+        print("[self.df] - antes de reset_index - cuando presiono el buton MEAN ==================================>")
+        print(self.df)
+
+        # Antes de pasarle reset_index de self.df
+        self.df =  self.df.reset_index()
+        self.replacaDataForRegression() #------------------------------------->aqui
+        self.messageLoad()
+        
+        # Resetear el índice fecha a una columna
+        self.df_replaced = self.df_replaced.reset_index()
             
         # Convertir la columna de fechas a datetime
-        self.df['Fecha_Hora'] = pd.to_datetime(self.df['Fecha_Hora'])
+        # Estamos cambiando a self.df por self.df_replaced -------------------------------->ojo aqui
+        self.df_replaced['Fecha_Hora'] = pd.to_datetime(self.df_replaced['Fecha_Hora'])
 
         # Establecer la columna de fechas como índice del dataframe
-        self.df.set_index('Fecha_Hora', inplace = True)
+        self.df_replaced.set_index('Fecha_Hora', inplace = True)
 
         # Agrupar los datos por un intervalo de 1 día y calcular el promedio
-        self.mean_time_interval= self.df.resample(self.time_interval).mean()
+        self.mean_time_interval= self.df_replaced.resample(self.time_interval).mean()
         self.mean_time_interval = self.mean_time_interval.rename(columns={'pm25': 'mean'})
 
         # Agrupar los datos por un intervalo de 1 día y calcular la mediana
-        self.median_time_interval = self.df.resample(self.time_interval).median()
+        self.median_time_interval = self.df_replaced.resample(self.time_interval).median()
         self.median_time_interval  = self.median_time_interval .rename(columns={'pm25': 'median'})
 
         # Agrupar los datos por un intervalo de 1 día y calcular la moda
-        self.df = self.df.reset_index()
-        self.df_moda = self.df.resample(self.time_interval, on='Fecha_Hora')['pm25'].apply(pd.Series.mode)
-        self.df.set_index('Fecha_Hora', inplace = True)
+        self.df_replaced = self.df_replaced.reset_index()
+        self.df_moda = self.df_replaced.resample(self.time_interval, on='Fecha_Hora')['pm25'].apply(pd.Series.mode)
+        self.df_replaced.set_index('Fecha_Hora', inplace = True)
 
         # Agrupar los datos por un intervalo de 1 día y calcular la desviación estándar
-        self.std_time_interval = self.df.resample(self.time_interval).std()
+        self.std_time_interval = self.df_replaced.resample(self.time_interval).std()
         self.std_time_interval = self.std_time_interval.rename(columns={'pm25': 'std'})
 
-        self.min_time_interval = self.df.resample(self.time_interval).min()
+        self.min_time_interval = self.df_replaced.resample(self.time_interval).min()
         self.min_time_interval = self.min_time_interval.rename(columns={'pm25': 'min'})
 
-        self.maximo_time_interval = self.df.resample(self.time_interval).max()
+        self.maximo_time_interval = self.df_replaced.resample(self.time_interval).max()
         self.maximo_time_interval = self.maximo_time_interval.rename(columns={'pm25': 'max'})
-        
-        print(self.mean_time_interval)
 
         # LLamamos a la funcion que calcula intervalo de confianza
         self.calcularIntervaloConfianza()
@@ -271,7 +298,7 @@ class MiVentana(QMainWindow, Ui_Form):
         self.df_mtc_std_ic = pd.concat([self.mean_time_interval, self.median_time_interval, self.std_time_interval, self.min_time_interval, self.maximo_time_interval, self.confidence_interval], axis=1)
 
         # Resetear el índice a una columna
-        self.df = self.df.reset_index()
+        #self.df_replaced = self.df_replaced.reset_index()
 
 
     def traerIntervaloTiempo(self):
@@ -284,63 +311,88 @@ class MiVentana(QMainWindow, Ui_Form):
     def calcularIntervaloConfianza(self):
 
         # Resetear el índice a una columna
-        self.df = self.df.reset_index()
+        self.df_replaced = self.df_replaced.reset_index()
 
         # Agrupar por semana y calcular el intervalo de confianza del 95%
-        self.confidence_interval = self.df.groupby(pd.Grouper(key='Fecha_Hora', freq=self.time_interval)).agg(lambda x: stats.t.interval(0.95, len(x)-1, loc=x.mean(), scale=stats.sem(x)))
+        self.confidence_interval = self.df_replaced.groupby(pd.Grouper(key='Fecha_Hora', freq=self.time_interval)).agg(lambda x: stats.t.interval(0.95, len(x)-1, loc=x.mean(), scale=stats.sem(x)))
         self.confidence_interval = self.confidence_interval.rename(columns={'pm25': 'confidence_interval 95%'})
 
         # Establecer la columna de fechas como índice del dataframe
-        self.df.set_index('Fecha_Hora', inplace = True)
+        self.df_replaced.set_index('Fecha_Hora', inplace = True)
 
 
 
     def EliminarDatos(self):
 
-        # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
-        #self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
+        if not self.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
+            self.mostrarMensajeIngresarValor()
 
-        # Llamamos a la funcion que muestra mensage de proceso
-        #self.messageLoad()
+        else: # Si ingreso al campo
 
-        #self.mostrarDatoTabla() 
+            # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
+            #self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
 
+            # Llamamos a la funcion que muestra mensage de proceso
+            #self.messageLoad()
 
-        self.replacaDataForRegression() #------------------------------------->aqui
-        self.messageLoad()
-        self.mostrarDatoTabla()
+            #self.mostrarDatoTabla() 
 
-        print("[INFO] Borramos los datos del dataFrame.")
+            print("[EliminarDatos]- cuando presiono el buton LIMPIAR DATOS====================================> ")
+            
+            if self.count_clean_data == 0:
+                # Que es la primera vez
+                print("[---------------------POR PRIMERA VEZ EL BUTON LIMPIAR---------------------]")
+                self.count_clean_data += 1
+            else:
+                print("[---------------------POR SEGUNDA VEZ EL BUTON LIMPIAR---------------------]")
+                self.df =  self.df.reset_index()
+
+            self.replacaDataForRegression() #------------------------------------->aqui
+            self.messageLoad()
+            df_3 = self.df_replaced.reset_index()
+            self.mostrarDatoTabla(df_3)
+
+            #print("[INFO] Borramos los datos del dataFrame.")
 
 
     
     def DescargarFileExcel(self):
 
-        # Resetear el índice a una columna
-        self.mean_time_interval = self.mean_time_interval.reset_index() 
-        self.df_mtc_std_ic = self.df_mtc_std_ic.reset_index()
+        # Verificar si el dataframe está vacío
+        if self.mean_time_interval.empty:
+            # El dataframe esta vacio y no hay nada que descargar
+            # Mostrar un mensaje al usuario
+            QMessageBox.warning(None, 'Warning', 'There is no data to download.')
 
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getSaveFileName(self, 'Guardar archivo', '', 'Archivo de Excel (*.xlsx)')
-        #file_name, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Excel Workbook (*.xlsx)", options=options)
-        if file_name:
-            writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
-            sheet_name_1 = 'mean_pm25_' + self.time_interval
-            sheet_name_2 = 'central_tendency_measures_' + self.time_interval
-            # Guardar los DataFrames en hojas separadas
-            self.mean_time_interval.to_excel(writer, sheet_name=sheet_name_1, index=False)
-            self.df_mtc_std_ic.to_excel(writer, sheet_name=sheet_name_2, index=False)
+        else:
+            # dataframe no esta vacio
 
-            # Cerrar el escritor de Excel
-            writer.close()
+            # Resetear el índice a una columna
+            self.mean_time_interval = self.mean_time_interval.reset_index() 
+            self.df_mtc_std_ic = self.df_mtc_std_ic.reset_index()
 
-            # Para descargar la grafica
-            self.descargarGrafica(file_name)
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            file_name, _ = QFileDialog.getSaveFileName(self, 'Guardar archivo', '', 'Archivo de Excel (*.xlsx)')
+            #file_name, _ = QFileDialog.getSaveFileName(self, "Guardar archivo Excel", "", "Excel Workbook (*.xlsx)", options=options)
+            if file_name:
+                writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
+                sheet_name_1 = 'mean_pm25_' + self.time_interval
+                sheet_name_2 = 'central_tendency_measures_' + self.time_interval
+                # Guardar los DataFrames en hojas separadas
+                self.mean_time_interval.to_excel(writer, sheet_name=sheet_name_1, index=False)
+                self.df_mtc_std_ic.to_excel(writer, sheet_name=sheet_name_2, index=False)
 
-        # Establecer la columna de fechas como índice del dataframe
-        self.mean_time_interval.set_index('Fecha_Hora', inplace = True)
-        self.df_mtc_std_ic.set_index('Fecha_Hora', inplace = True)
+                # Cerrar el escritor de Excel
+                writer.close()
+
+                # Para descargar la grafica
+                self.descargarGrafica(file_name)
+
+            # Establecer la columna de fechas como índice del dataframe
+            self.mean_time_interval.set_index('Fecha_Hora', inplace = True)
+            self.df_mtc_std_ic.set_index('Fecha_Hora', inplace = True)
+
 
     def descargarGrafica(self, file_name):
         route = self.getRutaImges(file_name)
@@ -381,6 +433,9 @@ class MiVentana(QMainWindow, Ui_Form):
 
         df_2 = self.df
 
+        print("[df_2] - replacaDataForRegression - despues de reset  ===================>")
+        print(df_2)
+
         # Convierte la columna 'Fecha' en un objeto de fecha y hora
         df_2['Fecha_Hora'] = pd.to_datetime(df_2['Fecha_Hora'])
 
@@ -405,16 +460,26 @@ class MiVentana(QMainWindow, Ui_Form):
 
         # Aplicamos la función a cada grupo
         self.df_replaced = grouped.apply(replace_outliers)
-        
-        self.df_replaced = self.df_replaced.reset_index()
+    
+        #self.df_replaced = self.df_replaced.reset_index()
+        print("[df_replaced] en replacaDataForRegression despues de replace_outliers =====================>")
         print(self.df_replaced)
         #self.mostrarDatoTabla(self.df_replaced)  #----------------------------------->aqui
-        print(self.df_replaced.shape)
+        #print(self.df_replaced.shape)
+
+
+    def mostrarMensajeIngresarValor(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("The grouping time interval is missing!!!")
+        msg.setWindowTitle("Empty field")
+        msg.exec_()
+            
 
     def mostrarMensaje(self):
-        # print(self.df)
-        #self.replacaDataForRegression()
-        print("Hola, presionaste el button Salir")
+
+
+        print("PRESIONANTE EL BUTON SALIR")
 
 
 if __name__ == "__main__":
