@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow
 import time
 import numpy as np
-import sys
+import sys, os
 import pandas as pd
 from scipy import stats
 import xlsxwriter
@@ -21,10 +21,16 @@ import re
 from regression import RegressionData
 
 
+from qt_mp25 import Ui_mainWindow
+
+
+# Detectar ruta donde esta el ejecutable
+application_api = os.path.dirname(sys.executable)
+ruta_padre = os.path.dirname(application_api)
+ruta_proyecto = os.path.dirname(ruta_padre)
+
 # Cargar la interfaz de usuario utilizando loadUiType
-Ui_Form, QMainWindow = uic.loadUiType("project_mp25.ui")
-
-
+Ui_Form, QMainWindow = uic.loadUiType('project_mp25.ui')
 class MiVentana(QMainWindow, Ui_Form):
     def __init__(self):
         super().__init__()
