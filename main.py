@@ -15,10 +15,9 @@ import pandas as pd
 from scipy import stats
 import xlsxwriter
 import matplotlib.pyplot as plt
+from scipy.stats import linregress
 
-
-# Variable global para almacenar dataframe
-df_global = None
+from regression import RegressionData
 
 
 # Cargar la interfaz de usuario utilizando loadUiType
@@ -294,17 +293,26 @@ class MiVentana(QMainWindow, Ui_Form):
         # Establecer la columna de fechas como índice del dataframe
         self.df.set_index('Fecha_Hora', inplace = True)
 
+
+
     def EliminarDatos(self):
 
         # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
-        self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
+        #self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
 
         # Llamamos a la funcion que muestra mensage de proceso
-        self.messageLoad()
+        #self.messageLoad()
 
+        #self.mostrarDatoTabla() 
+
+
+        self.replacaDataForRegression() #------------------------------------->aqui
+        self.messageLoad()
         self.mostrarDatoTabla()
 
         print("[INFO] Borramos los datos del dataFrame.")
+
+
     
     def DescargarFileExcel(self):
 
@@ -359,15 +367,53 @@ class MiVentana(QMainWindow, Ui_Form):
         for i in range(101):
             progress.setValue(i)
             QCoreApplication.processEvents()
-            time.sleep(0.008)
+            time.sleep(0.010)
             if progress.wasCanceled():
                 break
-
         progress.close()
+
+    
+    def replacaDataForRegression(self):
+        # LLamamos a la funcion que trae el tiempo de muestreo del campo txt
+        self.traerIntervaloTiempo()
+
+        df_2 = None
+
+        df_2 = self.df
+
+        # Convierte la columna 'Fecha' en un objeto de fecha y hora
+        df_2['Fecha_Hora'] = pd.to_datetime(df_2['Fecha_Hora'])
+
+        # Establece el índice como la columna 'Fecha'
+        df_2.set_index('Fecha_Hora', inplace=True)
+
+        # Agrupa por día
+        grouped = df_2.groupby(pd.Grouper(freq=self.time_interval))  #---------------------->aqui
+
+        # Mostrar cada grupo
+        #for nombre_grupo, grupo in grouped:
+            #print(f"Grupo {nombre_grupo}:")
+            #print(grupo)
+
+        # Definimos la función que reemplaza los datos nulos o atípicos por la regresión de cada grupo
+        def replace_outliers(group):
+            print("[INFO] estoy entrando a la funcion replace_outliers ....")
+            # Calcular los límites inferior y superior del rango aceptable de los valores
+            #print(group)
+            regression_data = RegressionData(group=group)
+            return regression_data.getDataCleaned()
+
+        # Aplicamos la función a cada grupo
+        self.df_replaced = grouped.apply(replace_outliers)
+        
+        self.df_replaced = self.df_replaced.reset_index()
+        print(self.df_replaced)
+        #self.mostrarDatoTabla(self.df_replaced)  #----------------------------------->aqui
+        print(self.df_replaced.shape)
 
     def mostrarMensaje(self):
         # print(self.df)
-        #self.calcularIntervaloConfianza()
+        #self.replacaDataForRegression()
         print("Hola, presionaste el button Salir")
 
 
