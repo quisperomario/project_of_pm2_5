@@ -17,7 +17,7 @@ import xlsxwriter
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
-
+import re
 from regression import RegressionData
 
 
@@ -60,8 +60,6 @@ class MiVentana(QMainWindow, Ui_Form):
 
         # Conectar la señal clicked del botón btnSalir a un método
         self.btnSalir.clicked.connect(self.mostrarMensaje)
-
-        print("[INFO] __init__ ")
 
     def seleccionarArchivo(self):
       
@@ -178,80 +176,60 @@ class MiVentana(QMainWindow, Ui_Form):
             self.mostrarMensajeIngresarValor()
         else:
 
-            # Llamamos a la funcion donde calcula el promedio
-            self.promedioIntervaloFechas()
+            # Tenemos que validar que haya ingresado muy bien en campo de tiempo
+            self.traerIntervaloTiempo()
+            if self.validationTimeInterval():
+                # El campo en valido
 
-            # Llamamos a la funcion para mostrar datos en la tabla tableCentralTendencyMeasures
-            self.mostrarDatoTablaMean()
+                # Llamamos a la funcion donde calcula el promedio
+                self.promedioIntervaloFechas()
 
-            # Llamamos a la funcion para mostrar las medidas de tendencia central en la tabla
-            self.mostrarDatoMedidasTendenciaCentral()
+                # Llamamos a la funcion para mostrar datos en la tabla tableCentralTendencyMeasures
+                self.mostrarDatoTablaMean()
 
-            # Crear el gráfico utilizando Matplotlib
-            self.figura = Figure()
-            self.grafico = self.figura.add_subplot(111)
+                # Llamamos a la funcion para mostrar las medidas de tendencia central en la tabla
+                self.mostrarDatoMedidasTendenciaCentral()
 
-            self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'], color='red')
-            self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'], color='blue')
-            
-            # Asignar etiquetas al eje x
-            self.grafico.set_xticks(self.mean_time_interval.index)
-            self.grafico.set_xticklabels(self.mean_time_interval.index, rotation=90)
-            self.grafico.set_xlabel("Date and Hour")
-            self.grafico.set_ylabel("PM2.5")
-            self.grafico.set_title("Mean for "+ self.time_interval + " of PM2.5")
-            # Ajustar posición de subplots para mostrar todas las etiquetas
-            self.figura.tight_layout()
+                # Crear el gráfico utilizando Matplotlib
+                self.figura = Figure()
+                self.grafico = self.figura.add_subplot(111)
 
-            self.grafico.grid()
-            
-
-            if self.count == 0:
-                # Agregar el gráfico al widget QVBoxLayout
-                self.canvas = FigureCanvasQTAgg(self.figura)
-                self.frameGrafico.addWidget(self.canvas)
-                self.count += 1 
-            else:
-
-                # para eliminar el objeto de gráfico del QVBoxLayout
-                self.frameGrafico.removeWidget(self.canvas)
-                self.canvas.deleteLater()
-
-                self.canvas = FigureCanvasQTAgg(self.figura)
-                self.frameGrafico.addWidget(self.canvas)
-
-            '''
-            if self.count == 0:
-                self.grafica = Canvas_grafica(self.mean_time_interval)
-                self.frameGrafico.addWidget(self.grafica)
-                self.count += 1 
-            else:
-                # para eliminar el objeto de gráfico del QVBoxLayout
-                self.frameGrafico.removeWidget(self.grafica)
-                self.grafica.deleteLater()
+                self.grafico.scatter(self.mean_time_interval.index, self.mean_time_interval['mean'], color='red')
+                self.grafico.plot(self.mean_time_interval.index, self.mean_time_interval['mean'], color='blue')
                 
-                self.grafica = Canvas_grafica(self.mean_time_interval)
-                self.frameGrafico.addWidget(self.grafica)
+                # Asignar etiquetas al eje x
+                self.grafico.set_xticks(self.mean_time_interval.index)
+                self.grafico.set_xticklabels(self.mean_time_interval.index, rotation=90)
+                self.grafico.set_xlabel("Date and Hour")
+                self.grafico.set_ylabel("PM2.5")
+                self.grafico.set_title("Mean for "+ self.time_interval + " of PM2.5")
+                # Ajustar posición de subplots para mostrar todas las etiquetas
+                self.figura.tight_layout()
 
-                print("para graficar otra vez")
-            '''
+                self.grafico.grid()
+                
 
+                if self.count == 0:
+                    # Agregar el gráfico al widget QVBoxLayout
+                    self.canvas = FigureCanvasQTAgg(self.figura)
+                    self.frameGrafico.addWidget(self.canvas)
+                    self.count += 1 
+                else:
 
-            #time.sleep(4)
+                    # para eliminar el objeto de gráfico del QVBoxLayout
+                    self.frameGrafico.removeWidget(self.canvas)
+                    self.canvas.deleteLater()
 
-            # para eliminar el objeto de gráfico del QVBoxLayout
-            #self.frameGrafico.removeWidget(self.grafica)
-            #self.grafica.deleteLater()  # opcional: elimina el objeto de gráfico por completo
+                    self.canvas = FigureCanvasQTAgg(self.figura)
+                    self.frameGrafico.addWidget(self.canvas)
 
-            print("[INFO] Llegue a este punto de graficas....")
+            else:
+                # El campo no es valido
+                # Mostrar un mensaje al usuario
+                QMessageBox.warning(None, 'Critical', 'Invalid field')
 
 
     def promedioIntervaloFechas(self):
-
-        self.traerIntervaloTiempo()
-
-        print("[self.df] - antes de reset_index - cuando presiono el buton MEAN ==================================>")
-        print(self.df)
 
         # Antes de pasarle reset_index de self.df
         self.df =  self.df.reset_index()
@@ -297,9 +275,6 @@ class MiVentana(QMainWindow, Ui_Form):
         # Unir dataframe - Concatenar los dataframes
         self.df_mtc_std_ic = pd.concat([self.mean_time_interval, self.median_time_interval, self.std_time_interval, self.min_time_interval, self.maximo_time_interval, self.confidence_interval], axis=1)
 
-        # Resetear el índice a una columna
-        #self.df_replaced = self.df_replaced.reset_index()
-
 
     def traerIntervaloTiempo(self):
 
@@ -307,6 +282,22 @@ class MiVentana(QMainWindow, Ui_Form):
         self.time_interval = self.txtTimeInterval.text()
         # Convertimos en mayuscula
         self.time_interval = self.time_interval.upper()
+
+
+    def validationTimeInterval(self):
+        # seconds[S]-minute[T]-hour[H]-day[D]-week[W]-months[M]-year[Y]
+        cadena = self.time_interval
+        regex =  "^(?:\d+[STHDWMY]|[STHDWMY](?!\w))[STHDWMY]?(?<!\d)$" # Regex para que solo ingrese el formaro indicado
+        if re.match(regex, cadena):
+            # La cadena es valida
+            regex = "^[0-9]*[STHDMYW]{1}$"
+            if re.match(regex, cadena):
+                return True
+        else:
+            # La cadena no es valida
+            return False
+            
+
 
     def calcularIntervaloConfianza(self):
 
@@ -329,30 +320,34 @@ class MiVentana(QMainWindow, Ui_Form):
 
         else: # Si ingreso al campo
 
-            # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
-            #self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
+            # Tenemos que validar que ingrese bien el campo texto de tiempo
+            self.traerIntervaloTiempo()
+            if self.validationTimeInterval():
+                # El campo valido
 
-            # Llamamos a la funcion que muestra mensage de proceso
-            #self.messageLoad()
+                # Eliminar filas que cumplen la condición y asignar el resultado a la misma DataFrame
+                #self.df.drop(self.df[(self.df['pm25'] <= 0) | (self.df['pm25']>=99999)].index, inplace=True)
 
-            #self.mostrarDatoTabla() 
+                # Llamamos a la funcion que muestra mensage de proceso
+                #self.messageLoad()
 
-            print("[EliminarDatos]- cuando presiono el buton LIMPIAR DATOS====================================> ")
+                #self.mostrarDatoTabla() 
+                
+                if self.count_clean_data == 0:
+                    # Que es la primera vez
+                    self.count_clean_data += 1
+                else:
+                    self.df =  self.df.reset_index()
+
+                self.replacaDataForRegression()
+                self.messageLoad()
+                df_3 = self.df_replaced.reset_index()
+                self.mostrarDatoTabla(df_3)
             
-            if self.count_clean_data == 0:
-                # Que es la primera vez
-                print("[---------------------POR PRIMERA VEZ EL BUTON LIMPIAR---------------------]")
-                self.count_clean_data += 1
             else:
-                print("[---------------------POR SEGUNDA VEZ EL BUTON LIMPIAR---------------------]")
-                self.df =  self.df.reset_index()
-
-            self.replacaDataForRegression() #------------------------------------->aqui
-            self.messageLoad()
-            df_3 = self.df_replaced.reset_index()
-            self.mostrarDatoTabla(df_3)
-
-            #print("[INFO] Borramos los datos del dataFrame.")
+                # El campo no es valido
+                # Mostrar un mensaje al usuario
+                QMessageBox.warning(None, 'Critical', 'Invalid field!!!')
 
 
     
@@ -426,15 +421,9 @@ class MiVentana(QMainWindow, Ui_Form):
 
     
     def replacaDataForRegression(self):
-        # LLamamos a la funcion que trae el tiempo de muestreo del campo txt
-        self.traerIntervaloTiempo()
-
         df_2 = None
 
         df_2 = self.df
-
-        print("[df_2] - replacaDataForRegression - despues de reset  ===================>")
-        print(df_2)
 
         # Convierte la columna 'Fecha' en un objeto de fecha y hora
         df_2['Fecha_Hora'] = pd.to_datetime(df_2['Fecha_Hora'])
@@ -443,30 +432,17 @@ class MiVentana(QMainWindow, Ui_Form):
         df_2.set_index('Fecha_Hora', inplace=True)
 
         # Agrupa por día
-        grouped = df_2.groupby(pd.Grouper(freq=self.time_interval))  #---------------------->aqui
-
-        # Mostrar cada grupo
-        #for nombre_grupo, grupo in grouped:
-            #print(f"Grupo {nombre_grupo}:")
-            #print(grupo)
+        grouped = df_2.groupby(pd.Grouper(freq=self.time_interval)) 
 
         # Definimos la función que reemplaza los datos nulos o atípicos por la regresión de cada grupo
         def replace_outliers(group):
             print("[INFO] estoy entrando a la funcion replace_outliers ....")
             # Calcular los límites inferior y superior del rango aceptable de los valores
-            #print(group)
             regression_data = RegressionData(group=group)
             return regression_data.getDataCleaned()
 
         # Aplicamos la función a cada grupo
         self.df_replaced = grouped.apply(replace_outliers)
-    
-        #self.df_replaced = self.df_replaced.reset_index()
-        print("[df_replaced] en replacaDataForRegression despues de replace_outliers =====================>")
-        print(self.df_replaced)
-        #self.mostrarDatoTabla(self.df_replaced)  #----------------------------------->aqui
-        #print(self.df_replaced.shape)
-
 
     def mostrarMensajeIngresarValor(self):
         msg = QMessageBox()
@@ -477,8 +453,6 @@ class MiVentana(QMainWindow, Ui_Form):
             
 
     def mostrarMensaje(self):
-
-
         print("PRESIONANTE EL BUTON SALIR")
 
 
