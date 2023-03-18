@@ -19,5 +19,9 @@ Finally, the 'Exit' button allows you to close the program.
 
 ![This is an image](./images/1.jpg)
 
+## File executable
+The file QqMe@n.exe is the project executable.
+![This is an image](./images/images_executable_program.jpg)
+
 
 
