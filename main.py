@@ -20,16 +20,12 @@ from PyQt5.QtWidgets import QMessageBox, QFileDialog
 import re
 
 from cleaned_data import CleanData
-
-
-# Detectar ruta donde esta el ejecutable
-application_api = os.path.dirname(sys.executable)
-ruta_padre = os.path.dirname(application_api)
-ruta_proyecto = os.path.dirname(ruta_padre)
+from qt_mp25 import Ui_mainWindow
 
 # Cargar la interfaz de usuario utilizando loadUiType
-Ui_Form, QMainWindow = uic.loadUiType('project_mp25.ui')
-class MiVentana(QMainWindow, Ui_Form):
+#Ui_Form, QMainWindow = uic.loadUiType('project_mp25.ui')
+#class MiVentana(QMainWindow, Ui_Form):
+class MiVentana(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -48,22 +44,26 @@ class MiVentana(QMainWindow, Ui_Form):
         self.count_clean_data = 0
 
         # Configurar la interfaz de usuario
-        self.setupUi(self)
+        #self.setupUi(self)
+
+        # Configurar la interfaz gráfica ---------------------------------->
+        self.ui = Ui_mainWindow()
+        self.ui.setupUi(self)
 
         # Conectar la señal clicked del botón btnSeleccionarArchivo a un método
-        self.btnAbrirFile.clicked.connect(self.seleccionarArchivo)
+        self.ui.btnAbrirFile.clicked.connect(self.seleccionarArchivo)
 
         # Conectar la señal clicked del botón btnSeleccionarArchivo a un método
-        self.btnPromedio.clicked.connect(self.calcularPromedio)
+        self.ui.btnPromedio.clicked.connect(self.calcularPromedio)
 
         # Conectar la señal clicked del botón btnEliminarDatos a un método
-        self.btnEliminarDatos.clicked.connect(self.EliminarDatos)
+        self.ui.btnEliminarDatos.clicked.connect(self.EliminarDatos)
 
         # Conectar la señal clicked del botón btnDescargarFileExcel a un método
-        self.btnDescargarFileExcel.clicked.connect(self.DescargarFileExcel)
+        self.ui.btnDescargarFileExcel.clicked.connect(self.DescargarFileExcel)
 
         # Conectar la señal clicked del botón btnSalir a un método
-        self.btnSalir.clicked.connect(self.mostrarMensaje)
+        self.ui.btnSalir.clicked.connect(self.mostrarMensaje)
 
     def seleccionarArchivo(self):
       
@@ -82,7 +82,7 @@ class MiVentana(QMainWindow, Ui_Form):
             print(f'Se seleccionó el archivo {archivo}')
 
             # Mostrar el nombre del archivo seleccionado en un cuadro de texto
-            self.txtArchivo.setText(archivo)
+            self.ui.txtArchivo.setText(archivo)
 
             # Conectar la señal clicked del botón btnLeerArchivo a un método
             self.leerArchivo()
@@ -96,7 +96,7 @@ class MiVentana(QMainWindow, Ui_Form):
 
     def leerArchivo(self):
         # Obtener el nombre del archivo de Excel seleccionado
-        archivo = self.txtArchivo.text()
+        archivo = self.ui.txtArchivo.text()
 
         # Leer el archivo en un objeto DataFrame de Pandas
         self.df = pd.read_excel(archivo)
@@ -107,20 +107,20 @@ class MiVentana(QMainWindow, Ui_Form):
     def mostrarDatoTabla(self, dataFrame):
 
         # Configurar la tabla y agregar datos
-        self.tblDatos.setRowCount(len(dataFrame.index))
-        self.tblDatos.setColumnCount(len(dataFrame.columns))
+        self.ui.tblDatos.setRowCount(len(dataFrame.index))
+        self.ui.tblDatos.setColumnCount(len(dataFrame.columns))
 
         for i in range(len(dataFrame.index)):
             for j in range(len(dataFrame.columns)):
                 item = QTableWidgetItem(str(dataFrame.iloc[i, j]))
-                self.tblDatos.setItem(i, j, item)
+                self.ui.tblDatos.setItem(i, j, item)
 
         # Personalizar los encabezados de la tabla
         encabezados = list(dataFrame.columns)
-        self.tblDatos.setHorizontalHeaderLabels(encabezados)
+        self.ui.tblDatos.setHorizontalHeaderLabels(encabezados)
 
         # Ajustar el tamaño de las columnas para que se ajusten a los datos
-        self.tblDatos.resizeColumnsToContents()
+        self.ui.tblDatos.resizeColumnsToContents()
 
     def mostrarDatoTablaMean(self):
 
@@ -128,20 +128,20 @@ class MiVentana(QMainWindow, Ui_Form):
         self.mean_time_interval = self.mean_time_interval.reset_index()
 
         # Configurar la tabla y agregar datos
-        self.tableMeanTimeInterval.setRowCount(len(self.mean_time_interval.index))
-        self.tableMeanTimeInterval.setColumnCount(len(self.mean_time_interval.columns))
+        self.ui.tableMeanTimeInterval.setRowCount(len(self.mean_time_interval.index))
+        self.ui.tableMeanTimeInterval.setColumnCount(len(self.mean_time_interval.columns))
 
         for i in range(len(self.mean_time_interval.index)):
             for j in range(len(self.mean_time_interval.columns)):
                 item = QTableWidgetItem(str(self.mean_time_interval.iloc[i, j]))
-                self.tableMeanTimeInterval.setItem(i, j, item)
+                self.ui.tableMeanTimeInterval.setItem(i, j, item)
 
         # Personalizar los encabezados de la tabla
         encabezados = list(self.mean_time_interval.columns)
-        self.tableMeanTimeInterval.setHorizontalHeaderLabels(encabezados)
+        self.ui.tableMeanTimeInterval.setHorizontalHeaderLabels(encabezados)
 
         # Ajustar el tamaño de las columnas para que se ajusten a los datos
-        self.tableMeanTimeInterval.resizeColumnsToContents()
+        self.ui.tableMeanTimeInterval.resizeColumnsToContents()
 
 
         # Establecer la columna de fechas como índice del dataframe
@@ -154,20 +154,20 @@ class MiVentana(QMainWindow, Ui_Form):
         self.df_mtc_std_ic = self.df_mtc_std_ic.reset_index()
 
         # Configurar la tabla y agregar datos
-        self.tableCentralTendencyMeasures.setRowCount(len(self.df_mtc_std_ic.index))
-        self.tableCentralTendencyMeasures.setColumnCount(len(self.df_mtc_std_ic.columns))
+        self.ui.tableCentralTendencyMeasures.setRowCount(len(self.df_mtc_std_ic.index))
+        self.ui.tableCentralTendencyMeasures.setColumnCount(len(self.df_mtc_std_ic.columns))
 
         for i in range(len(self.df_mtc_std_ic.index)):
             for j in range(len(self.df_mtc_std_ic.columns)):
                 item = QTableWidgetItem(str(self.df_mtc_std_ic.iloc[i, j]))
-                self.tableCentralTendencyMeasures.setItem(i, j, item)
+                self.ui.tableCentralTendencyMeasures.setItem(i, j, item)
 
         # Personalizar los encabezados de la tabla
         encabezados = list(self.df_mtc_std_ic.columns)
-        self.tableCentralTendencyMeasures.setHorizontalHeaderLabels(encabezados)
+        self.ui.tableCentralTendencyMeasures.setHorizontalHeaderLabels(encabezados)
 
         # Ajustar el tamaño de las columnas para que se ajusten a los datos
-        self.tableCentralTendencyMeasures.resizeColumnsToContents()
+        self.ui.tableCentralTendencyMeasures.resizeColumnsToContents()
 
 
         # Establecer la columna de fechas como índice del dataframe
@@ -176,7 +176,7 @@ class MiVentana(QMainWindow, Ui_Form):
 
     def calcularPromedio(self):
 
-        if not self.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
+        if not self.ui.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
             self.mostrarMensajeIngresarValor()
         else:
 
@@ -216,16 +216,16 @@ class MiVentana(QMainWindow, Ui_Form):
                 if self.count == 0:
                     # Agregar el gráfico al widget QVBoxLayout
                     self.canvas = FigureCanvasQTAgg(self.figura)
-                    self.frameGrafico.addWidget(self.canvas)
+                    self.ui.frameGrafico.addWidget(self.canvas)
                     self.count += 1 
                 else:
 
                     # para eliminar el objeto de gráfico del QVBoxLayout
-                    self.frameGrafico.removeWidget(self.canvas)
+                    self.ui.frameGrafico.removeWidget(self.canvas)
                     self.canvas.deleteLater()
 
                     self.canvas = FigureCanvasQTAgg(self.figura)
-                    self.frameGrafico.addWidget(self.canvas)
+                    self.ui.frameGrafico.addWidget(self.canvas)
 
             else:
                 # El campo no es valido
@@ -237,7 +237,7 @@ class MiVentana(QMainWindow, Ui_Form):
 
         # Antes de pasarle reset_index de self.df
         self.df =  self.df.reset_index()
-        self.replacaDataForRegression() #------------------------------------->aqui
+        self.replacaDataForMean() #------------------------------------->aqui
         self.messageLoad()
         
         # Resetear el índice fecha a una columna
@@ -283,7 +283,7 @@ class MiVentana(QMainWindow, Ui_Form):
     def traerIntervaloTiempo(self):
 
         # Traer el valor de txt 
-        self.time_interval = self.txtTimeInterval.text()
+        self.time_interval = self.ui.txtTimeInterval.text()
         # Convertimos en mayuscula
         self.time_interval = self.time_interval.upper()
 
@@ -316,10 +316,9 @@ class MiVentana(QMainWindow, Ui_Form):
         self.df_replaced.set_index('Fecha_Hora', inplace = True)
 
 
-
     def EliminarDatos(self):
 
-        if not self.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
+        if not self.ui.txtTimeInterval.text(): # Indica que no ingreso valor al campo txt
             self.mostrarMensajeIngresarValor()
 
         else: # Si ingreso al campo
@@ -343,7 +342,7 @@ class MiVentana(QMainWindow, Ui_Form):
                 else:
                     self.df =  self.df.reset_index()
 
-                self.replacaDataForRegression()
+                self.replacaDataForMean()
                 self.messageLoad()
                 df_3 = self.df_replaced.reset_index()
                 self.mostrarDatoTabla(df_3)
@@ -352,8 +351,6 @@ class MiVentana(QMainWindow, Ui_Form):
                 # El campo no es valido
                 # Mostrar un mensaje al usuario
                 QMessageBox.warning(None, 'Critical', 'Invalid field!!!')
-
-
     
     def DescargarFileExcel(self):
 
@@ -424,7 +421,7 @@ class MiVentana(QMainWindow, Ui_Form):
         progress.close()
 
     
-    def replacaDataForRegression(self):
+    def replacaDataForMean(self):
         df_2 = None
 
         df_2 = self.df
@@ -436,11 +433,10 @@ class MiVentana(QMainWindow, Ui_Form):
         df_2.set_index('Fecha_Hora', inplace=True)
 
         # Agrupa por día
-        grouped = df_2.groupby(pd.Grouper(freq=self.time_interval)) 
+        grouped = df_2.groupby(pd.Grouper(freq=self.time_interval), group_keys=False)
 
         # Definimos la función que reemplaza los datos nulos o atípicos por la regresión de cada grupo
         def replace_outliers(group):
-            print("[INFO] estoy entrando a la funcion replace_outliers ....")
             # Calcular los límites inferior y superior del rango aceptable de los valores
             regression_data = CleanData(group=group)
             return regression_data.getDataCleaned()
@@ -461,6 +457,8 @@ class MiVentana(QMainWindow, Ui_Form):
 
 
 if __name__ == "__main__":
+
+    '''
     # Crear la aplicación
     app = QtWidgets.QApplication([])
 
@@ -472,3 +470,9 @@ if __name__ == "__main__":
 
     # Iniciar el bucle de eventos
     app.exec_()
+    '''
+
+    app = QApplication(sys.argv)
+    window = MiVentana()
+    window.show()
+    sys.exit(app.exec_())
