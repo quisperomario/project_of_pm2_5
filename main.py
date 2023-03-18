@@ -18,10 +18,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 import re
-from regression import RegressionData
 
-
-from qt_mp25 import Ui_mainWindow
+from cleaned_data import CleanData
 
 
 # Detectar ruta donde esta el ejecutable
@@ -444,7 +442,7 @@ class MiVentana(QMainWindow, Ui_Form):
         def replace_outliers(group):
             print("[INFO] estoy entrando a la funcion replace_outliers ....")
             # Calcular los límites inferior y superior del rango aceptable de los valores
-            regression_data = RegressionData(group=group)
+            regression_data = CleanData(group=group)
             return regression_data.getDataCleaned()
 
         # Aplicamos la función a cada grupo

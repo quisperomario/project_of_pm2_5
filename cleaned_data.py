@@ -1,5 +1,5 @@
 
-class RegressionData:
+class CleanData:
     def __init__(self, group):
         self.df_group = group
         self.df_data_cleaned = group
